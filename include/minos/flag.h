@@ -19,23 +19,13 @@
 #define FLAG_SET             1
 
 struct flag_grp {
-	int type;
 	flag_t flags;
 	spinlock_t lock;
 	struct list_head wait_list;
 };
 
-struct flag_node {
-	struct list_head list;
-	struct task *task;
-	void *flag_grp;
-	flag_t flags;
-	int wait_type;
-};
-
 static void inline flag_init(struct flag_grp *fg, flag_t flags)
 {
-	fg->type = OS_EVENT_TYPE_FLAG;
 	fg->flags = flags;
 	init_list(&fg->wait_list);
 	spin_lock_init(&fg->lock);
@@ -48,5 +38,8 @@ flag_t flag_pend(struct flag_grp *grp, flag_t flags,
 
 flag_t flag_pend_get_flags_ready(void);
 flag_t flag_post(struct flag_grp *grp, flag_t flags, int opt);
+
+#define flag_set(grp, flags)	flag_post(grp, flags, FLAG_SET)
+#define flag_clear(grp, flags)	flag_post(grp, flags, FLAG_CLEAR)
 
 #endif

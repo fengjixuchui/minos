@@ -656,8 +656,11 @@ void sched_yield(void)
 
 		local_irq_restore(flags);
 		pcpu_resched(pcpu->pcpu_id);
-	} else
-		pr_warn("realtime task can not call %s\n", __func__);
+	} else {
+		local_irq_save(flags);
+		pcpu_resched(smp_processor_id());
+		local_irq_restore(flags);
+	}
 }
 
 void sched(void)
