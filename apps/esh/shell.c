@@ -48,7 +48,7 @@ static void shell_detach_tty(void)
 
 static int shell_cmd_tty(int argc, char **argv)
 {
-	if (strcmp(argv[1], "attach") == 0) {
+	if (argc > 2 && strcmp(argv[1], "attach") == 0) {
 		printf("Attach tty: %s press any key to active the console\n",
 				argv[2]);
 		pesh->tty = open_tty(argv[2]);
@@ -89,7 +89,7 @@ int shell_task(void *data)
 				break;
 
 			if (pesh->tty) {
-				if (ch == 4)	/*  ctrl + D */ {
+				if (ch == 29) { // Ctrl-]
 					shell_detach_tty();
 					esh_rx(pesh, '\n');
 				} else {

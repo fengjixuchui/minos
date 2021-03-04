@@ -28,6 +28,7 @@
 #include <minos/platform.h>
 #include <config/version.h>
 #include <minos/of.h>
+#include <minos/ramdisk.h>
 
 extern void softirq_init(void);
 extern void init_timers(void);
@@ -37,7 +38,6 @@ extern void bootmem_init(void);
 extern int allsymbols_init(void);
 extern void platform_init(void);
 extern int create_idle_task(void);
-extern int vmodules_init(void);
 
 #ifdef CONFIG_VIRT
 #include <virt/virt.h>
@@ -70,6 +70,8 @@ void boot_main(void)
 
 	mm_init();
 
+	ramdisk_init();
+
 	arch_init();
 	arch_init_percpu();
 
@@ -90,8 +92,6 @@ void boot_main(void)
 
 	sched_init();
 	local_sched_init();
-
-	vmodules_init();
 
 	device_init();
 	device_init_percpu();

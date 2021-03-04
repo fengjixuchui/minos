@@ -62,6 +62,16 @@ struct vcpu {
 	void **context;
 } __align_cache_line;
 
+struct vm_iommu {
+	/* private information for iommu drivers */
+	void *priv;
+
+	const struct iommu_ops *ops;
+
+	/* list of device nodes assigned to this vm */
+	struct list_head nodes;
+};
+
 struct vm {
 	int vmid;
 	uint32_t vcpu_nr;
@@ -70,6 +80,9 @@ struct vm {
 	uint32_t vcpu_affinity[VM_MAX_VCPU];
 	void *entry_point;
 	void *setup_data;
+	void *load_address;
+	struct ramdisk_file image_file;
+	struct ramdisk_file dtb_file;
 	char name[VM_NAME_SIZE];
 	struct vcpu **vcpus;
 	struct list_head vcpu_list;
@@ -98,6 +111,8 @@ struct vm {
 	void *os_data;
 
 	void *arch_data;
+
+	struct vm_iommu iommu;
 } __align(sizeof(unsigned long));
 
 #define vm_name(vm)	devnode_name(vm->dev_node)
